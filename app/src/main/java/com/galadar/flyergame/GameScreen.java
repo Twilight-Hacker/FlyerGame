@@ -7,7 +7,6 @@ import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Shader;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -15,6 +14,7 @@ public class GameScreen extends SurfaceView {
 
     private Bitmap bmp;
     private SurfaceHolder holder;
+    private int location = 0;
 
     public GameScreen(Context context) {
         super(context);
@@ -42,15 +42,14 @@ public class GameScreen extends SurfaceView {
         });
     }
 
-    public void bganimation(int time){
+    public void bganimation(int time, Canvas canvas){
         bmp = BitmapFactory.decodeResource(getResources(), R.drawable.bgbasis);
-        Canvas canvas = getHolder().lockCanvas();
         Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
         BitmapShader mShader1 = new BitmapShader(bmp, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
         paint.setShader(mShader1);
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.bgfull);
-        if(canvas==null) Log.e("SysError", "Canvas Null");
-        canvas.drawBitmap(bitmap, -time, 0, paint);
+        location+=time;
+        canvas.drawBitmap(bitmap, -location, 0, paint);
         getHolder().unlockCanvasAndPost(canvas);
     }
 

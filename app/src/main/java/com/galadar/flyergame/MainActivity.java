@@ -1,11 +1,13 @@
 package com.galadar.flyergame;
 
 import android.app.Activity;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +17,8 @@ import android.widget.RelativeLayout;
 public class MainActivity extends Activity{
 
     final static int sdkVer = Build.VERSION.SDK_INT;
-
+    Handler BgHandler = new Handler(Looper.getMainLooper());
+    Runnable r;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,18 +54,23 @@ public class MainActivity extends Activity{
             }
         });
 
-        //Handler to forward background
-        final Handler BgHandler = new Handler(Looper.getMainLooper());
-
-        Runnable r = new Runnable() {
+        r = new Runnable() {
             @Override
             public void run() {
-                background.bganimation(5);
-                BgHandler.postDelayed(this, 500);
+                Canvas canvas = background.getHolder().lockCanvas();
+                if(canvas!=null) background.bganimation(50, canvas);
+                else Log.e("SysError", "CANVAS NULL");
+                BgHandler.postDelayed(this, 100);
             }
         };
 
         r.run();
 
+    }
+
+    @Override
+    public void onBackPressed(){
+        BgHandler.removeCallbacks(r);
+        super.onBackPressed();
     }
 }
