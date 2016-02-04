@@ -28,7 +28,8 @@ public class MainActivity extends Activity{
 
         RelativeLayout main = (RelativeLayout)findViewById(R.id.ScreenView);
 
-        final GameScreen background = new GameScreen(this);
+        final MyView background = new MyView(this);
+        //background.setBackground(getResources().getDrawable(R.drawable.testbg, getTheme()));
         RelativeLayout.LayoutParams bgparams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         main.addView(background, bgparams);
 
@@ -58,9 +59,12 @@ public class MainActivity extends Activity{
             @Override
             public void run() {
                 Canvas canvas = background.getHolder().lockCanvas();
-                if(canvas!=null) background.bganimation(50, canvas);
+                if(canvas!=null) {
+                    background.onMyDraw(3, canvas);
+                    //Log.e("SysNormal", "Animating");
+                }
                 else Log.e("SysError", "CANVAS NULL");
-                BgHandler.postDelayed(this, 100);
+                BgHandler.postDelayed(this, 50);
             }
         };
 
