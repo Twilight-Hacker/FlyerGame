@@ -20,8 +20,8 @@ class MyView extends SurfaceView {
 
     Matrix matrix = new Matrix(); // transformation matrix
 
-    Path path = new Path();       // your path
     Paint paint = new Paint();    // your paint
+    Paint coursePaint = new Paint(); //Paint for course colloring
 
     long startTime;
     Bitmap bmp;
@@ -31,6 +31,8 @@ class MyView extends SurfaceView {
 
         // start the animation:
         this.startTime = System.currentTimeMillis();
+        paint.setColor(Color.DKGRAY);
+        coursePaint.setColor(Color.RED);
         this.postInvalidate();
 
         this.getHolder().addCallback(new SurfaceHolder.Callback() {
@@ -55,22 +57,25 @@ class MyView extends SurfaceView {
         });
     }
 
-    protected void onMyDraw(int time, Canvas canvas) {
-
-        long elapsedTime = System.currentTimeMillis() - startTime;
-
-        paint.setColor(Color.DKGRAY);
+    protected Path onMyDraw(float time, Canvas canvas, Path course) {
 
         //matrix.postRotate(30 * elapsedTime/1000);        // rotate 30° every second
         matrix.postTranslate(-time, 0); // move time pixels to the left
         // other transformations...
 
+
         canvas.concat(matrix);        // call this before drawing on the canvas!!
+        //course.transform(matrix);
+
 
         canvas.drawBitmap(bmp, 0, 0, paint);
+        course.offset(time, 0);
+        canvas.drawPath(course, coursePaint);
+
 
         //if(elapsedTime < animationDuration) this.postInvalidateDelayed( 1000 / framesPerSecond);
         getHolder().unlockCanvasAndPost(canvas);
+        return course;
     }
 
 }

@@ -3,6 +3,7 @@ package com.galadar.flyergame;
 import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Path;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,6 +20,10 @@ public class MainActivity extends Activity{
     final static int sdkVer = Build.VERSION.SDK_INT;
     Handler BgHandler = new Handler(Looper.getMainLooper());
     Runnable r;
+    Path circles = new Path();
+    float pX, pY, X, Y;
+    boolean penDown;
+    float speed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,29 +49,53 @@ public class MainActivity extends Activity{
         params.addRule(RelativeLayout.CENTER_VERTICAL);
 
         main.addView(character, params);
-
-        main.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                character.setX(event.getX() - (character.getWidth() / 2));
-                character.setY(event.getY() - (character.getHeight() / 2));
-                character.invalidate();
-                return true;
-            }
-        });
+        pX = character.getX();
+        pY = character.getY();
+        circles.moveTo(pX, pY);
+        penDown = false;
+        speed = 2;
 
         r = new Runnable() {
             @Override
             public void run() {
                 Canvas canvas = background.getHolder().lockCanvas();
                 if(canvas!=null) {
-                    background.onMyDraw(3, canvas);
-                    //Log.e("SysNormal", "Animating");
+                    if(!penDown){
+                        X=X+speed;
+                        circles.addCircle(X, Y, 30, Path.Direction.CW);
+                    }
+                    circles = background.onMyDraw(speed, canvas, circles);
                 }
                 else Log.e("SysError", "CANVAS NULL");
                 BgHandler.postDelayed(this, 50);
             }
         };
+
+
+        main.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case (MotionEvent.ACTION_DOWN):
+                        X = event.getX();
+                        Y = event.getY();
+                        penDown=true;
+                        break;
+                    case (MotionEvent.ACTION_MOVE):
+                        X = event.getX();
+                        Y = event.getY();
+                        //if (X <= pX) return true; pX = X;
+                        circles.addCircle(X, Y, 30, Path.Direction.CW);
+                    break;
+                    case (MotionEvent.ACTION_UP):
+                        X = event.getX();
+                        Y = event.getY();
+                        penDown=false;
+                        break;
+                }
+                return true;
+            }
+        });
 
         r.run();
 
@@ -77,4 +106,5 @@ public class MainActivity extends Activity{
         BgHandler.removeCallbacks(r);
         super.onBackPressed();
     }
+
 }
