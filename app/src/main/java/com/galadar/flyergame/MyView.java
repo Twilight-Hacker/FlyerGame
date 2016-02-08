@@ -15,15 +15,15 @@ import android.view.SurfaceView;
 
 class MyView extends SurfaceView {
 
-    int framesPerSecond = 60;
-    long animationDuration = 10000; // 10 seconds
-
     Matrix matrix = new Matrix(); // transformation matrix
+    Matrix inverse = new Matrix();
 
     Paint paint = new Paint();    // your paint
     Paint coursePaint = new Paint(); //Paint for course colloring
+    Paint textPaint = new Paint();
 
     long startTime;
+    float loc;
     Bitmap bmp;
 
     public MyView(Context context) {
@@ -34,6 +34,9 @@ class MyView extends SurfaceView {
         paint.setColor(Color.DKGRAY);
         coursePaint.setColor(Color.RED);
         this.postInvalidate();
+        textPaint.setColor(Color.BLACK);
+        textPaint.setTextSize(20f);
+        loc=0f;
 
         this.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
@@ -57,25 +60,25 @@ class MyView extends SurfaceView {
         });
     }
 
-    protected Path onMyDraw(float time, Canvas canvas, Path course) {
+    protected void onMyDraw(float time, Canvas canvas, Path course, String text) {
 
-        //matrix.postRotate(30 * elapsedTime/1000);        // rotate 30° every second
-        matrix.postTranslate(-time, 0); // move time pixels to the left
+        //matrix.preTranslate(-time, 0); // move time pixels to the left
+        //inverse.postTranslate(time, 0);
+        loc+=time;
         // other transformations...
 
-
-        canvas.concat(matrix);        // call this before drawing on the canvas!!
+        //canvas.concat(matrix);        // call this before drawing on the canvas!!
         //course.transform(matrix);
+        course.offset(-time, 0);
 
-
-        canvas.drawBitmap(bmp, 0, 0, paint);
-        course.offset(time, 0);
+        canvas.drawBitmap(bmp, -loc, 0, paint);
         canvas.drawPath(course, coursePaint);
 
+        //canvas.concat(inverse);
 
-        //if(elapsedTime < animationDuration) this.postInvalidateDelayed( 1000 / framesPerSecond);
+        canvas.drawText(text, 20, 20, textPaint);
+
         getHolder().unlockCanvasAndPost(canvas);
-        return course;
     }
 
 }
