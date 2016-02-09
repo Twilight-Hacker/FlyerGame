@@ -1,5 +1,6 @@
 package com.galadar.flyergame;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -21,12 +22,13 @@ public class MainActivity extends Activity {
     Handler BgHandler = new Handler(Looper.getMainLooper());
     Runnable r;
     Path circles = new Path();
+    PointPath course = new PointPath();
     Path temp = new Path();
     float pX, pY, X, Y;
-    boolean penDown;
     float speed;
     String pointString;
     int[] loc = new int[2];
+    ObjectAnimator anim = new ObjectAnimator();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +47,6 @@ public class MainActivity extends Activity {
                     case (MotionEvent.ACTION_DOWN):
                         X = event.getRawX();
                         Y = event.getRawY();
-                        penDown = true;
                         break;
                     case (MotionEvent.ACTION_MOVE):
                         X = event.getRawX();
@@ -55,14 +56,15 @@ public class MainActivity extends Activity {
                     case (MotionEvent.ACTION_UP):
                         X = event.getRawX();
                         Y = event.getRawY();
-                        penDown = false;
                         break;
                 }
                 //Log.e("Point", "X: "+ X + ", Y: "+Y);
-                background.getLocationOnScreen(loc);
-                X -= loc[0];
-                Y -= loc[1];
-                circles.addCircle(X, Y, 30, Path.Direction.CW);
+                //background.getLocationOnScreen(loc);
+                //X -= loc[0];
+                //Y -= loc[1];
+                course.rLineTo(X, Y);
+                //course.close();
+                //circles.addCircle(X, Y, 30, Path.Direction.CW);
                 return true;
             }
         });
@@ -84,8 +86,7 @@ public class MainActivity extends Activity {
         main.addView(character, params);
         pX = character.getX();
         pY = character.getY();
-        circles.moveTo(pX, pY);
-        penDown = false;
+        course.moveTo(pX, pY);
         speed = 3;
 
         r = new Runnable() {
@@ -94,10 +95,12 @@ public class MainActivity extends Activity {
                 Canvas canvas = background.getHolder().lockCanvas();
                 if(canvas!=null) {
                     pointString = "("+X+", "+Y+")";
-                    circles.addCircle(X+speed, Y, 30, Path.Direction.CW);
+                    //circles.addCircle(X+speed, Y, 30, Path.Direction.CW);
                     //temp.reset();
                     temp = new Path(circles);
-                    background.onMyDraw(speed, canvas, circles, pointString);
+                    background.onMyDraw(speed, canvas, course, pointString);
+                    character.setX(X);
+                    character.setY( course.getNextHeight(X) );
                 }
                 else Log.e("SysError", "CANVAS NULL");
                 BgHandler.postDelayed(this, 20);

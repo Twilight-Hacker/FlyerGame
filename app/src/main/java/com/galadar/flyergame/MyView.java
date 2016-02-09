@@ -33,6 +33,7 @@ class MyView extends SurfaceView {
         this.startTime = System.currentTimeMillis();
         paint.setColor(Color.DKGRAY);
         coursePaint.setColor(Color.RED);
+        coursePaint.setStrokeWidth(10f);
         this.postInvalidate();
         textPaint.setColor(Color.BLACK);
         textPaint.setTextSize(20f);
@@ -72,7 +73,7 @@ class MyView extends SurfaceView {
         course.offset(-time, 0);
 
         canvas.drawBitmap(bmp, -loc, 0, paint);
-        canvas.drawPath(course, coursePaint);
+        //canvas.drawPath(course, coursePaint);
 
         //canvas.concat(inverse);
 
