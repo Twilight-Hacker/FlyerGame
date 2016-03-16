@@ -22,7 +22,7 @@ public class MainActivity extends Activity {
     Handler BgHandler = new Handler(Looper.getMainLooper());
     Runnable r;
     Path circles = new Path();
-    PointPath course = new PointPath();
+    Path course = new Path();
     Path temp = new Path();
     float pX, pY, X, Y;
     float speed;
@@ -100,7 +100,7 @@ public class MainActivity extends Activity {
                     temp = new Path(circles);
                     background.onMyDraw(speed, canvas, course, pointString);
                     character.setX(X);
-                    character.setY( course.getNextHeight(X) );
+
                 }
                 else Log.e("SysError", "CANVAS NULL");
                 BgHandler.postDelayed(this, 20);

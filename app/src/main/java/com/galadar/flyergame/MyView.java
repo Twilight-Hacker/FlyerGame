@@ -47,7 +47,7 @@ class MyView extends SurfaceView {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
                 Canvas c = holder.lockCanvas(null);
-                bmp = BitmapFactory.decodeResource(getResources(), R.drawable.bgfull);
+                bmp = BitmapFactory.decodeResource(getResources(), R.drawable.bgbasis);
                 Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
                 BitmapShader mShader1 = new BitmapShader(bmp, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
                 paint.setShader(mShader1);
